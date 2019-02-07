@@ -1,4 +1,5 @@
-from typing import Generator, Tuple
+from optparse import OptionParser
+from typing import Generator, Tuple, List
 
 from flake8_variables_names import __version__ as version
 from flake8_variables_names.ast_helpers import extract_all_variable_names
@@ -57,19 +58,27 @@ class VariableNamesCheckerChecker:
             for error in errors:
                 yield (*error, type(self))
 
-    def get_varname_errors(self, var_name, var_ast_node):
+    def get_varname_errors(self, var_name: str, var_ast_node) -> List[Tuple[int, int, str]]:
         errors = []
         if (
             len(var_name) == 1
             and var_name not in self.single_letter_names_whitelist
         ):
-            errors.append((var_ast_node.lineno, var_ast_node.col_offset, 'VNE001 single letter variable names are not allowed'))
+            errors.append((
+                var_ast_node.lineno,
+                var_ast_node.col_offset,
+                'VNE001 single letter variable names are not allowed',
+            ))
         if var_name in self.variable_names_blacklist:
-            errors.append((var_ast_node.lineno, var_ast_node.col_offset, 'VNE002 variable name should be clarified'))
+            errors.append((
+                var_ast_node.lineno,
+                var_ast_node.col_offset,
+                'VNE002 variable name should be clarified',
+            ))
         return errors
 
     @classmethod
-    def add_options(cls, parser) -> None:
+    def add_options(cls, parser: OptionParser) -> None:
         parser.add_option(
             '--use-varnames-strict-mode',
             action='store_true',
@@ -80,7 +89,7 @@ class VariableNamesCheckerChecker:
         cls.use_strict_mode = bool(options.use_varnames_strict_mode)
 
     @property
-    def single_letter_names_whitelist(self):
+    def single_letter_names_whitelist(self) -> List[str]:
         return (
             self._single_letter_names_whitelist_strict
             if self.use_strict_mode
@@ -88,7 +97,7 @@ class VariableNamesCheckerChecker:
         )
 
     @property
-    def variable_names_blacklist(self):
+    def variable_names_blacklist(self) -> List[str]:
         blacklist = self._variable_names_blacklist
         if self.use_strict_mode:
             blacklist += self._variable_names_blacklist_strict_addon
