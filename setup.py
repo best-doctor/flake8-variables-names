@@ -32,7 +32,7 @@ setup(
     install_requires=['setuptools'],
     entry_points={
         'flake8.extension': [
-            'VNE = flake8_variables_names.checker:VariableNamesCheckerChecker',
+            'VNE = flake8_variables_names.checker:VariableNamesChecker',
         ],
     },
     url='https://github.com/best-doctor/flake8-variables-names',

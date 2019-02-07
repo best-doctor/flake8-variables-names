@@ -5,7 +5,7 @@ from flake8_variables_names import __version__ as version
 from flake8_variables_names.ast_helpers import extract_all_variable_names
 
 
-class VariableNamesCheckerChecker:
+class VariableNamesChecker:
     name = 'flake8-variables-names'
     version = version
 
@@ -98,7 +98,7 @@ class VariableNamesCheckerChecker:
 
     @property
     def variable_names_blacklist(self) -> List[str]:
-        blacklist = self._variable_names_blacklist
         if self.use_strict_mode:
-            blacklist += self._variable_names_blacklist_strict_addon
-        return blacklist
+            return self._variable_names_blacklist + self._variable_names_blacklist_strict_addon
+        else:
+            return self._variable_names_blacklist
