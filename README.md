@@ -1,4 +1,4 @@
-# flake8-annotations-complexity
+# flake8-variables-names
 
 
 [![Build Status](https://travis-ci.org/best-doctor/flake8-variables-names.svg?branch=master)](https://travis-ci.org/best-doctor/flake8-variables-names)
