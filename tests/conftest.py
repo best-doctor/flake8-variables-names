@@ -2,7 +2,7 @@ import ast
 import os
 from typing import Optional
 
-from flake8_variables_names.checker import VariableNamesChecker
+from flake8_variables_names.checker import VariableNamesChecker, ErrorTuple
 
 
 def run_validator_for_test_file(filename: str, use_strict_mode: Optional[bool] = None):
@@ -19,3 +19,8 @@ def run_validator_for_test_file(filename: str, use_strict_mode: Optional[bool] =
         checker.use_strict_mode = use_strict_mode
 
     return list(checker.run())
+
+
+def get_error_message(error: ErrorTuple) -> str:
+    ''' Get error message from error tuple returned by VariableNamesChecker.run() '''
+    return error[2]

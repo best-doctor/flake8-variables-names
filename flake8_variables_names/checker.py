@@ -69,13 +69,13 @@ class VariableNamesChecker:
             errors.append((
                 var_ast_node.lineno,
                 var_ast_node.col_offset,
-                'VNE001 single letter variable names are not allowed',
+                'VNE001 single letter variable names like \'%s\' are not allowed' % (var_name,),
             ))
         if var_name in self.variable_names_blacklist:
             errors.append((
                 var_ast_node.lineno,
                 var_ast_node.col_offset,
-                'VNE002 variable name should be clarified',
+                'VNE002 variable name \'%s\' should be clarified' % (var_name,),
             ))
         return errors
 
