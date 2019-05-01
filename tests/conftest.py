@@ -22,5 +22,5 @@ def run_validator_for_test_file(filename: str, use_strict_mode: Optional[bool] =
 
 
 def get_error_message(error: ErrorTuple) -> str:
-    ''' Get error message from error tuple returned by VariableNamesChecker.run() '''
+    """Get error message from error tuple returned by `VariableNamesChecker.run()`."""
     return error[2]
