@@ -4,6 +4,8 @@ from typing import Generator, Tuple, List
 from flake8_variables_names import __version__ as version
 from flake8_variables_names.ast_helpers import extract_all_variable_names
 
+ErrorTuple = Tuple[int, int, str, type]
+
 
 class VariableNamesChecker:
     name = 'flake8-variables-names'
@@ -51,7 +53,7 @@ class VariableNamesChecker:
         self.filename = filename
         self.tree = tree
 
-    def run(self) -> Generator[Tuple[int, int, str, type], None, None]:
+    def run(self) -> Generator[ErrorTuple, None, None]:
         variables_names = extract_all_variable_names(self.tree)
         for var_name, var_name_ast_node in variables_names:
             errors = self.get_varname_errors(var_name, var_name_ast_node)
@@ -67,13 +69,13 @@ class VariableNamesChecker:
             errors.append((
                 var_ast_node.lineno,
                 var_ast_node.col_offset,
-                'VNE001 single letter variable names are not allowed',
+                "VNE001 single letter variable names like '{0}' are not allowed".format(var_name),
             ))
         if var_name in self.variable_names_blacklist:
             errors.append((
                 var_ast_node.lineno,
                 var_ast_node.col_offset,
-                'VNE002 variable name should be clarified',
+                "VNE002 variable name '{0}' should be clarified".format(var_name),
             ))
         return errors
 
