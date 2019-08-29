@@ -1,3 +1,5 @@
+import builtins
+
 from optparse import OptionParser
 from typing import Generator, Tuple, List
 
@@ -60,6 +62,7 @@ class VariableNamesChecker:
 
     def get_varname_errors(self, var_name: str, var_ast_node) -> List[Tuple[int, int, str]]:
         errors = []
+        buildin_names = dir(builtins)
         if (
             len(var_name) == 1
             and var_name not in self.single_letter_names_whitelist
@@ -75,6 +78,13 @@ class VariableNamesChecker:
                 var_ast_node.col_offset,
                 'VNE002 variable name should be clarified',
             ))
+        if var_name in buildin_names:
+            errors.append((
+                var_ast_node.lineno,
+                var_ast_node.col_offset,
+                'VNE003 variable names that shadows buildins are not allowed',
+            ))
+
         return errors
 
     @classmethod

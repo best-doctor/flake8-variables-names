@@ -33,3 +33,13 @@ def test_ok_for_strict_names_file():
     assert not errors
     errors = run_validator_for_test_file('strict_names.py', use_strict_mode=True)
     assert len(errors) == 2
+
+
+def test_ok_for_builtins_names_file():
+    errors = run_validator_for_test_file('builtin_names.py', use_strict_mode=True)
+    assert len(errors) == 2
+
+
+def test_ok_for_class_level_names_file():
+    errors = run_validator_for_test_file('class_level_names.py', use_strict_mode=True)
+    assert len(errors) == 2
