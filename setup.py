@@ -23,6 +23,7 @@ setup(
     name=package_name,
     description='A flake8 extension that helps to make more readable variables names',
     long_description=get_long_description(),
+    long_description_content_type='text/markdown',
     packages=find_packages(),
     include_package_data=True,
     keywords='flake8 naming',
