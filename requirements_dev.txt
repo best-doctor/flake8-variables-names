@@ -15,6 +15,6 @@ flake8-print==3.1.0
 flake8-quotes==1.0.0
 flake8-string-format==0.2.3
 flake8-todo==0.7
-mypy==0.660
+mypy==0.740
 flake8-annotations-complexity==0.0.1
 flake8-annotations-coverage==0.0.2
