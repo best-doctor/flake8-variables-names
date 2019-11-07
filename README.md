@@ -4,6 +4,9 @@
 [![Build Status](https://travis-ci.org/best-doctor/flake8-variables-names.svg?branch=master)](https://travis-ci.org/best-doctor/flake8-variables-names)
 [![Maintainability](https://api.codeclimate.com/v1/badges/c7502e578af3f4437179/maintainability)](https://codeclimate.com/github/best-doctor/flake8-variables-names/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/c7502e578af3f4437179/test_coverage)](https://codeclimate.com/github/best-doctor/flake8-variables-names/test_coverage)
+[![PyPI version](https://badge.fury.io/py/flake8-variables-names.svg)](https://badge.fury.io/py/flake8-variables-names)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-variables-names)
+
 
 An extension for flake8 that helps to make more readable variables names.
 
@@ -39,8 +42,6 @@ $ flake8 test.py
 test.py:1:1: VNE001 single letter variable names are not allowed
 test.py:2:1: VNE002 variable name should be clarified
 ```
-
-Tested on Python 3.6 and flake8 3.5.0.
 
 
 ## Contributing
