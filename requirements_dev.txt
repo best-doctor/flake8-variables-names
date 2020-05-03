@@ -18,3 +18,4 @@ mypy==0.740
 flake8-annotations-complexity==0.0.2
 flake8-annotations-coverage==0.0.3
 flake8-cognitive-complexity==0.0.2
+safety==1.9.0
