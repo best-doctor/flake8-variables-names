@@ -55,6 +55,32 @@ class VariableNamesChecker:
         self.filename = filename
         self.tree = tree
 
+    @property
+    def single_letter_names_whitelist(self) -> List[str]:
+        return (
+            self._single_letter_names_whitelist_strict
+            if self.use_strict_mode
+            else self._single_letter_names_whitelist
+        )
+
+    @property
+    def variable_names_blacklist(self) -> List[str]:
+        if self.use_strict_mode:
+            return self._variable_names_blacklist + self._variable_names_blacklist_strict_addon
+        else:
+            return self._variable_names_blacklist
+
+    @classmethod
+    def add_options(cls, parser: OptionParser) -> None:
+        parser.add_option(
+            '--use-varnames-strict-mode',
+            action='store_true',
+        )
+
+    @classmethod
+    def parse_options(cls, options) -> None:
+        cls.use_strict_mode = bool(options.use_varnames_strict_mode)
+
     def run(self) -> Generator[ErrorTuple, None, None]:
         variables_names = extract_all_variable_names(self.tree)
         for var_name, var_name_ast_node in variables_names:
@@ -88,29 +114,3 @@ class VariableNamesChecker:
             ))
 
         return errors
-
-    @classmethod
-    def add_options(cls, parser: OptionParser) -> None:
-        parser.add_option(
-            '--use-varnames-strict-mode',
-            action='store_true',
-        )
-
-    @classmethod
-    def parse_options(cls, options) -> None:
-        cls.use_strict_mode = bool(options.use_varnames_strict_mode)
-
-    @property
-    def single_letter_names_whitelist(self) -> List[str]:
-        return (
-            self._single_letter_names_whitelist_strict
-            if self.use_strict_mode
-            else self._single_letter_names_whitelist
-        )
-
-    @property
-    def variable_names_blacklist(self) -> List[str]:
-        if self.use_strict_mode:
-            return self._variable_names_blacklist + self._variable_names_blacklist_strict_addon
-        else:
-            return self._variable_names_blacklist
