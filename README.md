@@ -48,7 +48,7 @@ test.py:2:1: VNE002 variable name should be clarified
 |:----------:|:-------------------------------------------------------:|
 |   VNE001   | single letter variable names like 'XXX' are not allowed |
 |   VNE002   | variable name 'XXX' should be clarified                 |
-|   VNE003   | variable names that shadows buildins are not allowed    |
+|   VNE003   | variable names that shadow builtins are not allowed     |
 
 ## Contributing
 

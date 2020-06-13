@@ -110,7 +110,7 @@ class VariableNamesChecker:
             errors.append((
                 var_ast_node.lineno,
                 var_ast_node.col_offset,
-                'VNE003 variable names that shadows buildins are not allowed',
+                'VNE003 variable names that shadow builtins are not allowed',
             ))
 
         return errors
