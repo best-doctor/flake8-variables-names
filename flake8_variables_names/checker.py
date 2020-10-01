@@ -1,8 +1,6 @@
 import builtins
-from functools import lru_cache
-
 from optparse import OptionParser
-from typing import FrozenSet, Generator, Set, Tuple, List
+from typing import FrozenSet, Generator, List, Set, Tuple
 
 from flake8_variables_names import __version__ as version
 from flake8_variables_names.ast_helpers import extract_all_variable_names
@@ -55,6 +53,8 @@ class VariableNamesChecker:
     _single_letter_names_whitelist = frozenset(('i', '_', 'T'))
     _single_letter_names_whitelist_strict = frozenset(('_', 'T'))
 
+    __cached_blacklist: Set[str] = set()
+
     def __init__(self, tree, filename: str):
         self.filename = filename
         self.tree = tree
@@ -68,8 +68,10 @@ class VariableNamesChecker:
         )
 
     @property
-    @lru_cache(maxsize=1)
     def variable_names_blacklist(self) -> Set[str]:
+        if self.__cached_blacklist:
+            return self.__cached_blacklist
+
         names: Set[str] = set(self._variable_names_blacklist)
 
         if self.use_strict_mode:
@@ -78,7 +80,9 @@ class VariableNamesChecker:
         names |= self.custom_bad_names
         names -= self.allow_variable_names
 
-        return names
+        self.__cached_blacklist = names
+
+        return self.__cached_blacklist
 
     @classmethod
     def add_options(cls, parser: OptionParser) -> None:

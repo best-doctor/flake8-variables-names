@@ -51,3 +51,10 @@ def test_ok_for_builtins_names_file():
 def test_ok_for_class_level_names_file():
     errors = run_validator_for_test_file('class_level_names.py', use_strict_mode=True)
     assert len(errors) == 2
+
+
+def test_custom_varnames_list():
+    errors = run_validator_for_test_file('custom_blacklist.py', custom_bad_names={'test', 'fest'})
+    assert len(errors) == 3
+    errors = run_validator_for_test_file('custom_blacklist.py', allow_variable_names={'baz'})
+    assert not errors
