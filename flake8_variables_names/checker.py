@@ -1,7 +1,8 @@
 import builtins
+from functools import lru_cache
 
 from optparse import OptionParser
-from typing import Generator, Tuple, List
+from typing import FrozenSet, Generator, Set, Tuple, List
 
 from flake8_variables_names import __version__ as version
 from flake8_variables_names.ast_helpers import extract_all_variable_names
@@ -15,7 +16,10 @@ class VariableNamesChecker:
 
     use_strict_mode = False
 
-    _variable_names_blacklist = [
+    allow_variable_names: Set[str] = set()
+    custom_bad_names: Set[str] = set()
+
+    _variable_names_blacklist = frozenset((
         # from https://github.com/wemake-services/wemake-python-styleguide/
         'val',
         'vals',
@@ -34,8 +38,8 @@ class VariableNamesChecker:
         'foo',
         'bar',
         'baz',
-    ]
-    _variable_names_blacklist_strict_addon = [
+    ))
+    _variable_names_blacklist_strict_addon = frozenset((
         'data',
         'result',
         'results',
@@ -47,16 +51,16 @@ class VariableNamesChecker:
         'obj',
         'info',
         'handler',
-    ]
-    _single_letter_names_whitelist = ['i', '_', 'T']
-    _single_letter_names_whitelist_strict = ['_', 'T']
+    ))
+    _single_letter_names_whitelist = frozenset(('i', '_', 'T'))
+    _single_letter_names_whitelist_strict = frozenset(('_', 'T'))
 
     def __init__(self, tree, filename: str):
         self.filename = filename
         self.tree = tree
 
     @property
-    def single_letter_names_whitelist(self) -> List[str]:
+    def single_letter_names_whitelist(self) -> FrozenSet[str]:
         return (
             self._single_letter_names_whitelist_strict
             if self.use_strict_mode
@@ -64,11 +68,17 @@ class VariableNamesChecker:
         )
 
     @property
-    def variable_names_blacklist(self) -> List[str]:
+    @lru_cache(maxsize=1)
+    def variable_names_blacklist(self) -> Set[str]:
+        names: Set[str] = set(self._variable_names_blacklist)
+
         if self.use_strict_mode:
-            return self._variable_names_blacklist + self._variable_names_blacklist_strict_addon
-        else:
-            return self._variable_names_blacklist
+            names |= self._variable_names_blacklist_strict_addon
+
+        names |= self.custom_bad_names
+        names -= self.allow_variable_names
+
+        return names
 
     @classmethod
     def add_options(cls, parser: OptionParser) -> None:
@@ -76,10 +86,36 @@ class VariableNamesChecker:
             '--use-varnames-strict-mode',
             action='store_true',
         )
+        parser.add_option(
+            '--add-bad-varnames',
+            type=str,
+            action='append',
+            parse_from_config=True,
+            default=[],
+        )
+        parser.add_option(
+            '--allow-varnames',
+            type=str,
+            action='append',
+            parse_from_config=True,
+            default=[],
+        )
 
     @classmethod
     def parse_options(cls, options) -> None:
         cls.use_strict_mode = bool(options.use_varnames_strict_mode)
+
+        if isinstance(options.add_bad_varnames, str):
+            varnames = options.add_bad_varnames.split(',')
+            cls.custom_bad_names = {varname.strip() for varname in varnames}
+        else:
+            cls.custom_bad_names = set(options.add_bad_varnames)
+
+        if isinstance(options.allow_varnames, str):
+            varnames = options.allow_varnames.split(',')
+            cls.allow_variable_names = {varname.strip() for varname in varnames}
+        else:
+            cls.allow_variable_names = set(options.allow_varnames)
 
     def run(self) -> Generator[ErrorTuple, None, None]:
         variables_names = extract_all_variable_names(self.tree)
