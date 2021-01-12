@@ -14,8 +14,7 @@ flake8-quotes==3.0.0
 flake8-string-format==0.3.0
 flake8-todo==0.7
 mypy==0.790
-# flake8-annotations-complexity==0.0.6
-git+git://github.com/best-doctor/flake8-annotations-complexity.git@v0.0.6
+flake8-annotations-complexity==0.0.6
 flake8-annotations-coverage==0.0.4
 flake8-cognitive-complexity==0.0.2
 safety==1.9.0
