@@ -38,11 +38,12 @@ setup(
     ],
     packages=find_packages(),
     include_package_data=True,
+    python_requires='>=3.7',
     keywords='flake8 naming',
     version=get_version(),
     author='Ilya Lebedev',
     author_email='melevir@gmail.com',
-    install_requires=['setuptools'],
+    install_requires=[],
     entry_points={
         'flake8.extension': [
             'VNE = flake8_variables_names.checker:VariableNamesChecker',
