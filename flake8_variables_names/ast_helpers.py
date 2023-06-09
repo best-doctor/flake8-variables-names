@@ -11,7 +11,12 @@ def get_var_names_from_assignment(
         if isinstance(assignment_node.target, ast.Name):
             return [(assignment_node.target.id, assignment_node.target)]
     elif isinstance(assignment_node, ast.Assign):
-        names = [t for t in assignment_node.targets if isinstance(t, ast.Name)]
+        names = []
+        for target in assignment_node.targets:
+            if isinstance(target, ast.Name):
+                names.append(target)
+            elif isinstance(target, ast.Tuple):
+                names.extend([dim for dim in target.dims if isinstance(dim, ast.Name)])
         return [(n.id, n) for n in names]
     return []
 
