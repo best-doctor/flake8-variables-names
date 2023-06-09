@@ -4,20 +4,26 @@ from typing import List, Tuple, Union
 from flake8_variables_names.list_helpers import flat
 
 
+def extract_name_nodes_from_assignment(assignment_node: ast.Assign) -> List[ast.Name]:
+    names = []
+    for target in assignment_node.targets:
+        if isinstance(target, ast.Name):
+            names.append(target)
+        elif isinstance(target, ast.Tuple):
+            names.extend([dim for dim in target.dims if isinstance(dim, ast.Name)])
+    return names
+
+
 def get_var_names_from_assignment(
     assignment_node: Union[ast.Assign, ast.AnnAssign],
 ) -> List[Tuple[str, ast.AST]]:
-    if isinstance(assignment_node, ast.AnnAssign):
-        if isinstance(assignment_node.target, ast.Name):
-            return [(assignment_node.target.id, assignment_node.target)]
+    if (
+        isinstance(assignment_node, ast.AnnAssign)
+        and isinstance(assignment_node.target, ast.Name)
+    ):
+        return [(assignment_node.target.id, assignment_node.target)]
     elif isinstance(assignment_node, ast.Assign):
-        names = []
-        for target in assignment_node.targets:
-            if isinstance(target, ast.Name):
-                names.append(target)
-            elif isinstance(target, ast.Tuple):
-                names.extend([dim for dim in target.dims if isinstance(dim, ast.Name)])
-        return [(n.id, n) for n in names]
+        return [(n.id, n) for n in extract_name_nodes_from_assignment(assignment_node)]
     return []
 
 
