@@ -4,27 +4,30 @@ from typing import List, Tuple, Union
 from flake8_variables_names.list_helpers import flat
 
 
-def extract_name_nodes_from_assignment(assignment_node: ast.Assign) -> List[ast.Name]:
-    names = []
-    for target in assignment_node.targets:
-        if isinstance(target, ast.Name):
-            names.append(target)
-        elif isinstance(target, ast.Tuple):
-            names.extend([dim for dim in target.dims if isinstance(dim, ast.Name)])
-    return names
+def extract_names_from_node(node: Union[ast.expr, ast.stmt]) -> List[ast.Name]:
+    if isinstance(node, ast.Name):
+        return [node]
+    if isinstance(node, ast.Assign):
+        nodes = []
+        for target in node.targets:
+            nodes.extend(extract_names_from_node(target))
+        return nodes
+    if isinstance(node, ast.AnnAssign):
+        return extract_names_from_node(node.target)
+    if isinstance(node, ast.Starred):
+        return extract_names_from_node(node.value)
+    if isinstance(node, ast.Tuple):
+        nodes = []
+        for elt in node.elts:
+            nodes.extend(extract_names_from_node(elt))
+        return nodes
+    return []
 
 
 def get_var_names_from_assignment(
     assignment_node: Union[ast.Assign, ast.AnnAssign],
 ) -> List[Tuple[str, ast.AST]]:
-    if (
-        isinstance(assignment_node, ast.AnnAssign)
-        and isinstance(assignment_node.target, ast.Name)
-    ):
-        return [(assignment_node.target.id, assignment_node.target)]
-    elif isinstance(assignment_node, ast.Assign):
-        return [(n.id, n) for n in extract_name_nodes_from_assignment(assignment_node)]
-    return []
+    return [(n.id, n) for n in extract_names_from_node(assignment_node)]
 
 
 def get_var_names_from_funcdef(funcdef_node: ast.FunctionDef) -> List[Tuple[str, ast.arg]]:
@@ -46,10 +49,8 @@ def get_var_names_from_for(for_node: ast.For) -> List[Tuple[str, ast.AST]]:
 
 def extract_all_variable_names(ast_tree: ast.AST) -> List[Tuple[str, ast.AST]]:
     var_info: List[Tuple[str, ast.AST]] = []
-    assignments = [n for n in ast.walk(ast_tree) if isinstance(n, ast.Assign)]
+    assignments = [n for n in ast.walk(ast_tree) if isinstance(n, (ast.Assign, ast.AnnAssign))]
     var_info += flat([get_var_names_from_assignment(a) for a in assignments])
-    ann_assignments = [n for n in ast.walk(ast_tree) if isinstance(n, ast.AnnAssign)]
-    var_info += flat([get_var_names_from_assignment(a) for a in ann_assignments])
     funcdefs = [n for n in ast.walk(ast_tree) if isinstance(n, ast.FunctionDef)]
     var_info += flat([get_var_names_from_funcdef(f) for f in funcdefs])
     fors = [n for n in ast.walk(ast_tree) if isinstance(n, ast.For)]

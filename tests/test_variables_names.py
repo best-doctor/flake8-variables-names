@@ -13,9 +13,9 @@ def test_ok_good_names():
 
 def test_ok_for_short_names_file():
     errors = run_validator_for_test_file('short_names.py', use_strict_mode=True)
-    assert len(errors) == 7
+    assert len(errors) == 9
     errors = run_validator_for_test_file('short_names.py', use_strict_mode=False)
-    assert len(errors) == 6
+    assert len(errors) == 8
     assert (
         get_error_message(errors[0])
         == "VNE001 single letter variable names like 'a' are not allowed"
