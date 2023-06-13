@@ -22,6 +22,17 @@ def test_ok_for_short_names_file():
     )
 
 
+def test_ok_for_names_in_loops_file():
+    errors = run_validator_for_test_file('loops_names.py', use_strict_mode=True)
+    assert len(errors) == 3
+    errors = run_validator_for_test_file('loops_names.py', use_strict_mode=False)
+    assert len(errors) == 2
+    assert (
+        get_error_message(errors[0])
+        == "VNE001 single letter variable names like 'a' are not allowed"
+    )
+
+
 def test_ok_for_commented_names_file():
     errors = run_validator_for_test_file('commented_names.py', use_strict_mode=True)
     assert not errors
