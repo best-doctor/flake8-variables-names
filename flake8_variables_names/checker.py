@@ -6,6 +6,7 @@ from typing import Generator, Tuple, List
 from flake8_variables_names import __version__ as version
 from flake8_variables_names.ast_helpers import extract_all_variable_names
 
+
 ErrorTuple = Tuple[int, int, str, type]
 
 
@@ -75,6 +76,7 @@ class VariableNamesChecker:
         parser.add_option(
             '--use-varnames-strict-mode',
             action='store_true',
+            parse_from_config=True,
         )
 
     @classmethod
