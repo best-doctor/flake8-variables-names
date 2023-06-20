@@ -11,29 +11,29 @@ def extract_names_from_node(node) -> List[ast.Name]:
 
 
 @extract_names_from_node.register
-def _extract_names_from_name_node(node: ast.Name):
+def _extract_names_from_name_node(node: ast.Name) -> List[ast.Name]:
     return [node]
 
 
 @extract_names_from_node.register
-def _extract_names_from_assign_node(node: ast.Assign):
+def _extract_names_from_assign_node(node: ast.Assign) -> List[ast.Name]:
     return flat([extract_names_from_node(target) for target in node.targets])
 
 
 # in some versions of Python, singledispatch does not support `Union` in type annotations
 @extract_names_from_node.register(ast.AnnAssign)
 @extract_names_from_node.register(ast.For)
-def _extract_names_from_annassign_node(node):
+def _extract_names_from_annassign_node(node) -> List[ast.Name]:
     return extract_names_from_node(node.target)
 
 
 @extract_names_from_node.register
-def _extract_names_from_starred_node(node: ast.Starred):
+def _extract_names_from_starred_node(node: ast.Starred) -> List[ast.Name]:
     return extract_names_from_node(node.value)
 
 
 @extract_names_from_node.register
-def _extract_names_from_tuple_node(node: ast.Tuple):
+def _extract_names_from_tuple_node(node: ast.Tuple) -> List[ast.Name]:
     return flat([extract_names_from_node(elt) for elt in node.elts])
 
 
